@@ -39,11 +39,15 @@ class Login extends Component {
           this.setState({ isLoggedIn: true})
         }})
         .catch(err => {
-          console.error(err);
+          console.log("INSIDE ERROR LOGIN")
+
+          
+
         });
         console.log("THIS SHOULDNT BE HERE")
     };
   render() {
+
       if (this.state.isLoggedIn) {
         console.log("YOU ARE HERE")
           return <Navigate to = {{ pathname: "/events" }} />;

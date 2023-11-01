@@ -8,7 +8,7 @@ import Typography from "@mui/material/Typography";
 import { styled } from "@mui/material/styles";
 import { Button } from '@mui/base/Button';
 import { useButton } from '@mui/base/useButton';
-import { Component, setCustomValidity } from "react";
+import { Component, setCustomValidity, Alert } from "react";
 import ButtonGroup from '@mui/material/ButtonGroup';
 import FormControl from '@mui/material/FormControl';
 import {Container, Stack, checkboxClasses} from "@mui/material";
@@ -98,19 +98,19 @@ const [formValue, setformValue]=useState({
     email:''
 })
 const[formUpdate, setformUpdate] = useState({
-
-    
 })
+const[errorMessage, seterrorMessage] = useState('')
 
 
 useEffect(() => {
+
     if(valueSelect=="getAll"){
         getItems();
     }
     if(valueSelect==''){
         getItems();
     }
-}, [valueSelect])
+}, [valueSelect, errorMessage])
 
 
 const getItems = useCallback(async() => {
@@ -121,15 +121,12 @@ const getItems = useCallback(async() => {
 
 const handleChangeForm=(e,name)=> {
     const {value}=e.target
-    if(e.target.value.match("^[a-zA-Z ]*$")!=null){
-        e.target.setCustomValidity("Input inválido")
-    }
-    else{
+
         setformValue(prevState=>({
             ...prevState,
             [name]: value
           }))
-    }
+    
     
     console.log(formValue)
   }
@@ -180,6 +177,7 @@ const handleAdd = async(event)=>{
 
 const handleUpdate = async(event)=>{
     const URL = "http://localhost:3005/api/v1/empresa/" + getValue;
+    console.log(getValue);
     await axios.patch(URL, formUpdate)
     .then(res=>{
         console.log("SUCESS UPDATE");
@@ -188,6 +186,10 @@ const handleUpdate = async(event)=>{
         })
         setvalueSelect('getAll');
     })
+    .catch(err=>{
+        handleError("Empresa não encontrada")
+        setgetValue('')
+    })
 }
 const handleDelete = async (event)=>{
     await axios({
@@ -195,13 +197,14 @@ const handleDelete = async (event)=>{
         url: "http://localhost:3005/api/v1/empresa/" + getValue,
       })
     .then(res=>{    
-
+        if(res.status==304){
+            seterrorMessage("CNPJ não encontrado");
+        }
         setvalueSelect('getAll');
     })
     .catch(err=>{
-        if(err.status==404){
-
-        }
+        handleError("Empresa não encontrada")
+        setgetValue('')
     })
 }
 const handleGet = async (event) => {
@@ -216,20 +219,27 @@ const handleGet = async (event) => {
         console.log("HERE")
         setTest(res.data.data.empresa)
         console.log(item.current)
-    })  
+    }) 
+    .catch(err=>{
+        handleError("Empresa não encontrada")
+        setgetValue('')
+    }) 
     ;}
+const handleError = (error) => {
 
+    seterrorMessage(error);
+    alert(error)
+    seterrorMessage('')
+    
+}
 const bodySelect = () =>{
     if(valueSelect=="add"){
-      return (  <div>
+      return (         <div>
                      <TextField
                         label="Nome"
                         variant="filled"
                         color="secondary"
-                        onChange={(e) => {
-                            
-                                handleChangeForm(e, "nome")
-                             }}
+                        onChange={(e) => handleChangeForm(e, "nome")}
                         style={{ marginRight: 10 }}
                         required
                         onInvalid={(e)=>{e.target.setCustomValidity("error msg:  Nome inválido.")}}
@@ -299,7 +309,7 @@ const bodySelect = () =>{
                         required
                     />
                     <Button type="submit" style={{maxWidth: '30px', maxHeight: '30px', minWidth: '30px', minHeight: '30px'}}label="Submit" onClick={handleAdd}></Button>
-                    <br /></div> )
+                    </div> )
     }
     if(valueSelect=="delete"){
         return(<div>

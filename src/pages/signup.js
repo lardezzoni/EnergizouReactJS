@@ -1,6 +1,18 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { Navigate } from "react-router-dom"
+import {Field} from 'react-final-form'
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import Link from '@mui/material/Link';
+import Typography from '../components/Typography';
+import FormControl from '@mui/material/FormControl';
+import TextField from '../components/TextField';
+import { Input } from '@mui/material';
+import RFTextField from '../components/RFTextField';
+import FormButton from '../components/FormButton';
+import FormFeedback from '../components/FormFeedback';
+
 class SignUp extends Component {
     constructor(props) {
         super(props);
@@ -105,7 +117,64 @@ class SignUp extends Component {
                   </div>
                 </form>
                 
-              </div>
+              
+             <FormControl
+             onSubmit={this.handleSubmit}
+           >
+               <Box component="form" onSubmit={this.handleSubmit} noValidate sx={{ mt: 6 }}>
+                 <Grid container spacing={2}>
+                  <Grid item xs={12} sm={6}>
+                  <Input
+                      type="text"
+                      className="form-control"
+                      name="name"
+                      placeholder="Name"
+                      onChange={this.handleInputChange}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                   <Input
+                      type="text"
+                      className="form-control"
+                      name="password"
+                      placeholder="Password"
+                      onChange={this.handleInputChange}
+                    />
+                   </Grid>
+                   <Grid item xs={12} sm={6}>
+                   <Input
+                      type="text"
+                      className="form-control"
+                      name="passwordConfirm"
+                      placeholder="Password Confirm"
+                      onChange={this.handleInputChange}
+                    />
+                   </Grid>
+                   <Grid item xs={12} sm={6}>
+                   <Input
+                      type="text"
+                      className="form-control"
+                      name="email"
+                      placeholder="Email"
+                      onChange={this.handleInputChange}
+                    />
+                   </Grid>
+                 </Grid>
+                 
+                
+                 
+                 <FormButton
+                   sx={{ mt: 3, mb: 2 }}
+                   color="secondary"
+                   type="submit"
+                   label="Sign up"         
+                 >
+                  Sign up
+                 </FormButton>
+               </Box>
+             
+           </FormControl>
+           </div>
             </div>
           );
 };
