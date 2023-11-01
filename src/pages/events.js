@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useState, useEffect,setUpdatedState, useRef, useCallback } from 'react';
+import { useState, useEffect,setUpdatedState, useRef, useCallback, useReducer } from 'react';
 import { NoSsr } from '@mui/base/NoSsr';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
@@ -8,7 +8,7 @@ import Typography from "@mui/material/Typography";
 import { styled } from "@mui/material/styles";
 import { Button } from '@mui/base/Button';
 import { useButton } from '@mui/base/useButton';
-import { Component } from "react";
+import { Component, setCustomValidity } from "react";
 import ButtonGroup from '@mui/material/ButtonGroup';
 import FormControl from '@mui/material/FormControl';
 import {Container, Stack, checkboxClasses} from "@mui/material";
@@ -26,7 +26,14 @@ import { DataGrid, GridRowsProp, GridColDef } from '@mui/x-data-grid';
 import { TextField } from "@mui/material"; 
 import { ClassNames } from '@emotion/react';
 import MenuItem from '@mui/material/MenuItem';
+import { useFetcher } from 'react-router-dom';
 
+function useForceUpdate(){
+    const [value, setValue] = useState(0); // integer state
+    return () => setValue(value => value + 1); // update state to force render
+    // A function that increment 👆🏻 the previous state like here 
+    // is better than directly setting `setValue(value + 1)`
+}
 const columns: GridColDef[] = [
     { field: 'nome', headerName: 'Nome', width: 150 },
     { field: 'senha', headerName: 'Senha', width: 150 },
@@ -66,185 +73,321 @@ const StyledTableCell = withStyles((theme) => ({
   }))(TableRow);
 
 
+
   
 const Events = () => {
 
 let item = useRef([])
-
 
 const [valueSelect, setvalueSelect] = useState('')
 const optionsSelect = {
 
 }
 const [getValue, setgetValue]= useState('')
+const [test, setTest] = useState([])
+const [update, setUpdate] = useState(0);
+const [formValue, setformValue]=useState({
+    nome: '',
+    senha:'',
+    empresa:'',
+    CNPJ:0,
+    CEP:0,
+    endereço: '',
+    numero: 0,
+    telefone:0,
+    email:''
+})
+const[formUpdate, setformUpdate] = useState({
 
+    
+})
 
 
 useEffect(() => {
+    if(valueSelect=="getAll"){
+        getItems();
+    }
+    if(valueSelect==''){
+        getItems();
+    }
+}, [valueSelect])
+
+
+const getItems = useCallback(async() => {
+    const res =  await axios.get("http://localhost:3005/api/v1/empresa/test");
     
-    getItems()
-}, [item.current])
-
-
-
-const getItems = async () => {
-
-        await axios.get("http://localhost:3005/api/v1/empresa/test")
-        .then(res => {
-            let dataRes = Object.entries(res.data.data.data); 
-           
-            
-            let arrayIte = [];
-            /*dataRes.map(firstArray => {
-                
-                firstArray.map(secondArray => {
-                   if(typeof secondArray == 'object'){
-                    }
-                })
-                
-            }) */
-            for(let i = 0; i<res.data.data.data.length; i++ ){
-                    arrayIte.push(res.data.data.data[i])
-                
-            }
-
-            item.current = arrayIte;
-            return;;})
-    
-}
-
-
-const reRender = useCallback(async()=>{
-    getItems();
+    setTest(res.data.data.data)
 })
+
+const handleChangeForm=(e,name)=> {
+    const {value}=e.target
+    if(e.target.value.match("^[a-zA-Z ]*$")!=null){
+        e.target.setCustomValidity("Input inválido")
+    }
+    else{
+        setformValue(prevState=>({
+            ...prevState,
+            [name]: value
+          }))
+    }
+    
+    console.log(formValue)
+  }
+const handleUpdateForm=(e,name)=> {
+    const {value}=e.target
+    setformUpdate(prevState=>({
+      ...prevState,
+      [name]: value
+    }))
+    console.log(formValue)
+  }
+
 const handleChange = (event) => {
     setvalueSelect(event.target.value);
   };
+const handleAdd = async(event)=>{
+    await axios.post("http://localhost:3005/api/v1/empresa/test",formValue)
+    .then(res=>{    
+        console.log("HERE")
+        console.log('success')
+        setformValue({
+            nome: '',
+            senha:'',
+            empresa:'',
+            CNPJ:0,
+            CEP:0,
+            endereço: '',
+            numero: 0,
+            telefone:0,
+            email:''
+        })
+        setvalueSelect('getAll');
+    })
+    .catch(err=>{
+        setformValue({
+            nome: '',
+            senha:'',
+            empresa:'',
+            CNPJ:0,
+            CEP:0,
+            endereço: '',
+            numero: 0,
+            telefone:0,
+            email:''
+        })
+    })
+}
 
-const handleGet = (event) => {
+const handleUpdate = async(event)=>{
+    const URL = "http://localhost:3005/api/v1/empresa/" + getValue;
+    await axios.patch(URL, formUpdate)
+    .then(res=>{
+        console.log("SUCESS UPDATE");
+        setformUpdate({
+
+        })
+        setvalueSelect('getAll');
+    })
+}
+const handleDelete = async (event)=>{
+    await axios({
+        method: 'DELETE',
+        url: "http://localhost:3005/api/v1/empresa/" + getValue,
+      })
+    .then(res=>{    
+
+        setvalueSelect('getAll');
+    })
+    .catch(err=>{
+        if(err.status==404){
+
+        }
+    })
+}
+const handleGet = async (event) => {
     const reqBodyCNPJ = {
         CNPJ: getValue
     }
-    axios({
+    await axios({
         method: 'GET',
         url: "http://localhost:3005/api/v1/empresa/" + getValue,
       })
     .then(res=>{    
         console.log("HERE")
-        item.current = (res.data.data.empresa)
+        setTest(res.data.data.empresa)
         console.log(item.current)
     })  
-      ;}
+    ;}
 
 const bodySelect = () =>{
     if(valueSelect=="add"){
-      return (  <div><TextField
+      return (  <div>
+                     <TextField
+                        label="Nome"
+                        variant="filled"
+                        color="secondary"
+                        onChange={(e) => {
+                            
+                                handleChangeForm(e, "nome")
+                             }}
+                        style={{ marginRight: 10 }}
+                        required
+                        onInvalid={(e)=>{e.target.setCustomValidity("error msg:  Nome inválido.")}}
+                    />
+                    <TextField
                         label="Senha"
                         variant="filled"
                         color="secondary"
+                        onChange={(e) => handleChangeForm(e, "senha") }
                         style={{ marginRight: 10 }}
+                        required
                     />
-                     <TextField
-                        label="Nome da empresa"
+                    <TextField
+                        label="Empresa"
                         variant="filled"
                         color="secondary"
+                        onChange={(e) => handleChangeForm(e, "empresa") }
                         style={{ marginRight: 10 }}
+                        required
                     />
                      <TextField
                         label="CNPJ"
                         variant="filled"
                         color="secondary"
+                        onChange={(e) => handleChangeForm(e, "CNPJ") }
                         style={{ marginRight: 10 }}
+                        required
                     />
                      <TextField
                         label="CEP"
                         variant="filled"
                         color="secondary"
+                        onChange={(e) => handleChangeForm(e, "CEP") }
                         style={{ marginRight: 10 }}
+                        required
                     />
                      <TextField
                         label="Endereço"
                         variant="filled"
                         color="secondary"
+                        onChange={(e) => handleChangeForm(e, "endereço") }
                         style={{ marginRight: 10 }}
+                        required
                     />
                      <TextField
                         label="Número"
                         variant="filled"
                         color="secondary"
+                        onChange={(e) => handleChangeForm(e, "numero") }
                         style={{ marginRight: 10 }}
+                        required
                     />
                      <TextField
                         label="Telefone"
                         variant="filled"
                         color="secondary"
-                        style={{ marginRight: 10 }}
+                        onChange={(e) => handleChangeForm(e, "telefone") }
+                        required
+                     
                     />
                      <TextField
                         label="Email"
                         variant="filled"
                         color="secondary"
+                        onChange={(e) => handleChangeForm(e,"email") }
                         style={{ marginRight: 10 }}
+                        required
                     />
+                    <Button type="submit" style={{maxWidth: '30px', maxHeight: '30px', minWidth: '30px', minHeight: '30px'}}label="Submit" onClick={handleAdd}></Button>
                     <br /></div> )
     }
     if(valueSelect=="delete"){
-        return(<TextField
-            label="CNPJ"
-            variant="filled"
-            color="secondary"
-            style={{ marginRight: 10 }}
-        />)
+        return(<div>
+            <FormControl onSubmit={handleDelete}>  
+              <TextField
+              label="CNPJ"
+              variant="filled"
+              color="secondary"
+              onInput={e=>setgetValue(e.target.value)}
+              style={{ marginRight: 10 }}
+          />
+          <Button type="submit" style={{maxWidth: '30px', maxHeight: '30px', minWidth: '30px',
+           minHeight: '30px'}}label="Submit" onClick={handleDelete}></Button></FormControl>
+          </div>)
     }
     if(valueSelect=="update"){
-           return(  <div><TextField
+           return(  
+           
+           <div>
+             <FormControl onSubmit={handleUpdate}>  
+              <TextField
+              label="CNPJ"
+              variant="filled"
+              color="secondary"
+              onInput={e=>setgetValue(e.target.value)}
+              style={{ marginRight: 10 }}
+          />
+          </FormControl>
+            
+          <TextField
+                        label="Nome"
+                        variant="filled"
+                        color="secondary"
+                        onChange={(e) => handleUpdateForm(e, "nome") }
+                        style={{ marginRight: 10 }}
+                    />
+                    <TextField
                         label="Senha"
                         variant="filled"
                         color="secondary"
+                        onChange={(e) => handleUpdateForm(e, "senha") }
                         style={{ marginRight: 10 }}
                     />
-                     <TextField
-                        label="Nome da empresa"
+                    <TextField
+                        label="Empresa"
                         variant="filled"
                         color="secondary"
-                        style={{ marginRight: 10 }}
-                    />
-                     <TextField
-                        label="CNPJ"
-                        variant="filled"
-                        color="secondary"
+                        onChange={(e) => handleUpdateForm(e, "empresa") }
                         style={{ marginRight: 10 }}
                     />
                      <TextField
                         label="CEP"
                         variant="filled"
                         color="secondary"
+                        onChange={(e) => handleUpdateForm(e, "CEP") }
                         style={{ marginRight: 10 }}
                     />
                      <TextField
                         label="Endereço"
                         variant="filled"
                         color="secondary"
+                        onChange={(e) => handleUpdateForm(e, "endereço") }
                         style={{ marginRight: 10 }}
                     />
                      <TextField
                         label="Número"
                         variant="filled"
                         color="secondary"
+                        onChange={(e) => handleUpdateForm(e, "numero") }
                         style={{ marginRight: 10 }}
                     />
                      <TextField
                         label="Telefone"
                         variant="filled"
                         color="secondary"
+                        onChange={(e) => handleUpdateForm(e, "telefone") }
                         style={{ marginRight: 10 }}
                     />
                      <TextField
                         label="Email"
                         variant="filled"
                         color="secondary"
+                        onChange={(e) => handleUpdateForm(e,"email") }
                         style={{ marginRight: 10 }}
                     />
+                    <Button type="submit" style={{maxWidth: '30px', maxHeight: '30px', 
+                    minWidth: '30px', minHeight: '30px'}}label="Submit" onClick={handleUpdate}></Button>
+
                     <br /></div> )
     }
     if(valueSelect=="get"){
@@ -261,7 +404,6 @@ const bodySelect = () =>{
             </div>)
     }
     if(valueSelect=="getAll"){
-        reRender();
         return <div></div>
     }
     else{
@@ -277,8 +419,9 @@ const body = () => {
                         <DataGrid
                     columns={columns}  
                     autoHeight ={true}
-                    rows={item.current}
+                    rows={test}
                     getRowId={(row) => Math.random()}
+                    
                     />
                 </div> )
         }
