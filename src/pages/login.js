@@ -8,7 +8,6 @@ import FormControl from '@mui/material/FormControl';
 import TextField from '../components/TextField';
 import FormButton from '../components/FormButton';
 
-
 class Login extends Component {
   constructor(props) {
       super(props);
@@ -17,8 +16,11 @@ class Login extends Component {
         password: '',
         email: '',
         isLoggedIn: false,
+        showPassword: false
       };
     }
+  
+  
   
     
     handleInputChange = e => {
@@ -31,7 +33,7 @@ class Login extends Component {
       e.preventDefault();
 
       const { password, email } = this.state;
-  
+
       const loginForm = {
         password,
         email,
@@ -81,11 +83,13 @@ class Login extends Component {
                    <br/>
                   <Grid item xs={12} sm={6} spacing={2}>
                    <TextField
-                      type="text"
+                   
+                   type={'password'}
                       className="form-control"
                       name="password"
                       placeholder="Password"
                       onChange={this.handleInputChange}
+                     
                     />
                    </Grid>
                    <FormButton

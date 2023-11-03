@@ -21,6 +21,7 @@ class SignUp extends Component {
         };
       }
 
+     
       handleInputChange = e => {
         this.setState({
           [e.target.name]: e.target.value,
@@ -88,23 +89,25 @@ class SignUp extends Component {
                   <br/>
                   <Grid item xs={12} sm={6} spacing={2}>
                    <TextField
-                      type="text"
+                      type={"password"}
                       className="form-control"
                       name="password"
                       placeholder="Password"
                       required
                       onChange={this.handleInputChange}
+                     
                     />
                    </Grid>
                    <br/>
                    <Grid item xs={12} sm={6}>
                    <TextField
-                      type="text"
+                      type={"password"}
                       className="form-control"
                       name="passwordConfirm"
                       placeholder="Password Confirm"
                       required
                       onChange={this.handleInputChange}
+                    
                     />
                    </Grid>
                    <br/>

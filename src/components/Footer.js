@@ -4,27 +4,9 @@ import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import Container from '@mui/material/Container';
 import Typography from '../components/Typography';
-import TextField from '../components/TextField';
-import { createTheme } from '@mui/material/styles';
-import { purple } from '@mui/material/colors';
 import {CiLinkedin} from 'react-icons/ci';
 import {GrGithub} from 'react-icons/gr'
-const footerTheme = createTheme({
-  palette: {
-    primary: {
-        main: '#FF5733',
-        // light: will be calculated from palette.primary.main,
-        // dark: will be calculated from palette.primary.main,
-        // contrastText: will be calculated to contrast with palette.primary.main
-      },
-    secondary: {
-        main: '#E0C2FF',
-        light: '#F5EBFF',
-        // dark: will be calculated from palette.secondary.main,
-        contrastText: '#47008F',
-      },
-  },
-});
+
 function Copyright() {
   return (
     <React.Fragment>
@@ -37,29 +19,6 @@ function Copyright() {
   );
 }
 
-const iconStyle = {
-  width: 48,
-  height: 48,
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  backgroundColor: 'warning.main',
-  mr: 1,
-  '&:hover': {
-    bgcolor: 'warning.dark',
-  },
-};
-
-const LANGUAGES = [
-  {
-    code: 'en-US',
-    name: 'English',
-  },
-  {
-    code: 'fr-FR',
-    name: 'Français',
-  },
-];
  
 const Footer = () => {
     return (
