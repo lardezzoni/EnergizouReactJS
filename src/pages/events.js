@@ -736,7 +736,13 @@ const body = () => {
                     columns={columns}  
                     autoHeight ={true}
                     rows={test}
-                    sx={{width: "100%"}}
+                    sx={{width: "100%",
+                   "& .MuiDataGrid-columnHeader":{
+                      color: "#ffffff",
+                      backgroundColor:"#000000"
+                    },
+                  }}
+                  
                     getRowId={(row) => Math.random()}
                     
                     />
