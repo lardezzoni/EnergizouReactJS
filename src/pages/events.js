@@ -28,13 +28,9 @@ import { ClassNames } from '@emotion/react';
 import MenuItem from '@mui/material/MenuItem';
 import { useFetcher } from 'react-router-dom';
 import {useForm} from 'react-hook-form';
+import Grid from '@mui/material/Grid';
 
-function useForceUpdate(){
-    const [value, setValue] = useState(0); // integer state
-    return () => setValue(value => value + 1); // update state to force render
-    // A function that increment 👆🏻 the previous state like here 
-    // is better than directly setting `setValue(value + 1)`
-}
+
 const columns: GridColDef[] = [
     { field: 'nome', headerName: 'Nome', width: 150 },
     { field: 'senha', headerName: 'Senha', width: 150 },
@@ -42,7 +38,7 @@ const columns: GridColDef[] = [
     { field: 'CNPJ', headerName: 'CNPJ', width: 150 },
     { field: 'CEP', headerName: 'CEP', width: 150 },
     { field: 'endereco', headerName: 'Endereço', width: 150 },
-    { field: 'numero', headerName: 'Número', width: 150 },
+    { field: 'numero', headerName: 'Número', width: 100 },
     { field: 'telefone', headerName: 'Telefone', width: 150 },
     { field: 'email', headerName: 'Email', width: 150 }
   ];
@@ -317,6 +313,9 @@ const bodySelect = () =>{
       return (        
       <div>
       <form onSubmit={handleSubmit((data) => handleSubmit2(data))}>
+      <Box ml={4} pt={2}> 
+      <Grid item xs={12} sm={6} spacing={2}>
+
       <TextField
             {...register("nome")}
             id="nome"
@@ -329,8 +328,6 @@ const bodySelect = () =>{
               !errors.nome && dirtyFields.nome && "!bg-green-50"
             }`}
           />
-        
-        <span>{errors.nome?.message}</span>
         <TextField
             {...register("senha")}
             id="senha"
@@ -368,7 +365,14 @@ const bodySelect = () =>{
               !errors.CNPJ && dirtyFields.CNPJ && "!bg-green-50"
             }`}
           />
-          <span>{errors.CNPJ?.message}</span>
+      </Grid>
+      <br/>
+      <span>{errors.CNPJ?.message}</span>
+      <br/>
+
+      <br/>
+      <Grid item xs={12} sm={6} spacing={2}>
+
           <TextField
             {...register("CEP", {
               pattern: {
@@ -386,7 +390,6 @@ const bodySelect = () =>{
               !errors.CEP && dirtyFields.CEP && "!bg-green-50"
             }`}
           />
-                  <span>{errors.CEP?.message}</span>
 
           <TextField
             {...register("endereco", {
@@ -405,7 +408,6 @@ const bodySelect = () =>{
               !errors.endereço && dirtyFields.endereço && "!bg-green-50"
             }`}
           />
-          <span>{errors.endereço?.message}</span>
 
           <TextField
             {...register("numero", {
@@ -424,7 +426,6 @@ const bodySelect = () =>{
               !errors.numero && dirtyFields.numero && "!bg-green-50"
             }`}
           />
-          <span>{errors.numero?.message}</span>
 
           <TextField
             {...register("telefone", {
@@ -443,7 +444,6 @@ const bodySelect = () =>{
               !errors.telefone && dirtyFields.telefone && "!bg-green-50"
             }`}
           />
-          <span>{errors.telefone?.message}</span>
        
           <TextField
             {...register("email", {
@@ -462,14 +462,27 @@ const bodySelect = () =>{
               !errors.email && dirtyFields.email && "!bg-green-50"
             }`}
           />
-          <span>{errors.email?.message}</span>
+        </Grid>
+        <br/>
+        <span>{errors.CEP?.message}</span>
 
-        <Button style={{ display: "block" }} onClick={handleSubmit2}>submit</Button>
+        <span>{errors.endereco?.message}</span>
+
+        <span>{errors.numero?.message}</span>
+        <span>{errors.telefone?.message}</span>
+
+          <span>{errors.email?.message}</span>
+            <br/>
+            <br/>
+          <Button color='secondary'sx={{border:"2px solid"}}type="submit" label="Submit" onClick={handleSubmit}>Submit</Button>
+          </Box>
     </form> </div>)
     }
     if(valueSelect=="delete"){
       return(<div>
-        <form onSubmit={handleSubmit((data)=>handleDelete(data))}>  
+        <form onSubmit={handleSubmit((data)=>handleDelete(data))}>
+        <Box ml={4} pt={2} > 
+        <Grid item xs={12} sm={6} spacing={2}>
         <TextField
       {...register("CNPJ", {
         pattern: {
@@ -487,15 +500,47 @@ const bodySelect = () =>{
         !errors.CNPJ && dirtyFields.CNPJ && "!bg-green-50"
       }`}
     />
+    <br/>
     <span>{errors.CNPJ?.message}</span>
-      
-      <Button type="submit" style={{maxWidth: '30px', maxHeight: '30px', minWidth: '30px', minHeight: '30px'}}label="Submit">Submit</Button></form>
+    <br/>
+    <Button color='secondary'sx={{border:"2px solid"}}type="submit" label="Submit">Submit</Button>
+      </Grid>
+      </Box>
+
+      </form>
       </div>)
     }
     if(valueSelect=="update"){
       return (        
         <div>
         <form onSubmit={handleSubmit((data) => handleUpdate(data))}>
+        <Box ml={4} pt={2} > 
+        <Grid item xs={12} sm={6} spacing={2}>
+
+        <TextField
+              {...register("CNPJ", {
+                pattern: {
+                  value: /^[0-9]{2}\.[0-9]{3}\.[0-9]{3}\/[0-9]{4}\-[0-9]{2}$/,
+                  message: "Por favor, use o formato XX.XXX.XXX/XXXX-XX"
+                }
+              })}
+              id="CNPJ"
+              name="CNPJ"
+              type="CNPJ"
+              label="CNPJ"
+              required
+              autoComplete="off"
+              className={`input w-full ${
+                !errors.CNPJ && dirtyFields.CNPJ && "!bg-green-50"
+              }`}
+            />
+            </Grid>
+               <br/>
+
+      <span>{errors.CNPJ?.message}</span>
+              <br/>
+            <br/>
+      <Grid item xs={12} sm={6} spacing={2}>
         <TextField
               {...register("nome")}
               id="nome"
@@ -509,7 +554,6 @@ const bodySelect = () =>{
               }`}
             />
           
-          <span>{errors.nome?.message}</span>
           <TextField
               {...register("senha")}
               id="senha"
@@ -531,24 +575,6 @@ const bodySelect = () =>{
               
             />
             <TextField
-              {...register("CNPJ", {
-                pattern: {
-                  value: /^[0-9]{2}\.[0-9]{3}\.[0-9]{3}\/[0-9]{4}\-[0-9]{2}$/,
-                  message: "Por favor, use o formato XX.XXX.XXX/XXXX-XX"
-                }
-              })}
-              id="CNPJ"
-              name="CNPJ"
-              type="CNPJ"
-              label="CNPJ"
-              required
-              autoComplete="off"
-              className={`input w-full ${
-                !errors.CNPJ && dirtyFields.CNPJ && "!bg-green-50"
-              }`}
-            />
-            <span>{errors.CNPJ?.message}</span>
-            <TextField
               {...register("CEP", {
                 pattern: {
                   value: /^[0-9]{5}\-[0-9]{3}$/,
@@ -565,8 +591,14 @@ const bodySelect = () =>{
                 !errors.CEP && dirtyFields.CEP && "!bg-green-50"
               }`}
             />
-                    <span>{errors.CEP?.message}</span>
-  
+             </Grid>
+      <br/>
+      <span>{errors.CEP?.message}</span>
+      <br/>
+
+      <br/>
+      <Grid item xs={12} sm={6} spacing={2}>
+            
             <TextField
               {...register("endereco", {
                 pattern: {
@@ -584,7 +616,6 @@ const bodySelect = () =>{
                 !errors.endereço && dirtyFields.endereço && "!bg-green-50"
               }`}
             />
-            <span>{errors.endereço?.message}</span>
   
             <TextField
               {...register("numero", {
@@ -603,7 +634,6 @@ const bodySelect = () =>{
                 !errors.numero && dirtyFields.numero && "!bg-green-50"
               }`}
             />
-            <span>{errors.numero?.message}</span>
   
             <TextField
               {...register("telefone", {
@@ -622,7 +652,6 @@ const bodySelect = () =>{
                 !errors.telefone && dirtyFields.telefone && "!bg-green-50"
               }`}
             />
-            <span>{errors.telefone?.message}</span>
          
             <TextField
               {...register("email", {
@@ -641,14 +670,26 @@ const bodySelect = () =>{
                 !errors.email && dirtyFields.email && "!bg-green-50"
               }`}
             />
-            <span>{errors.email?.message}</span>
-  
-          <Button style={{ display: "block" }} onClick={handleUpdate}>submit</Button>
+            </Grid>
+        <br/>
+
+        <span>{errors.endereco?.message}</span>
+
+        <span>{errors.numero?.message}</span>
+        <span>{errors.telefone?.message}</span>
+
+          <span>{errors.email?.message}</span>
+            <br/>
+            <br/>
+            <Button color='secondary'sx={{border:"2px solid"}}type="submit" label="Submit" onClick={handleSubmit}>Submit</Button>
+          </Box>
       </form> </div>)
     }
     if(valueSelect=="get"){
             return(<div>
               <form onSubmit={handleSubmit((data)=>handleGet(data))}>  
+              <Box ml={4} pt={2} > 
+        <Grid item xs={12} sm={6} spacing={2}>
               <TextField
             {...register("CNPJ", {
               pattern: {
@@ -666,9 +707,15 @@ const bodySelect = () =>{
               !errors.CNPJ && dirtyFields.CNPJ && "!bg-green-50"
             }`}
           />
+              <br/>
+
           <span>{errors.CNPJ?.message}</span>
+          <br/>
             
-            <Button type="submit" style={{maxWidth: '30px', maxHeight: '30px', minWidth: '30px', minHeight: '30px'}}label="Submit">Submit</Button></form>
+          <Button color='secondary'sx={{border:"2px solid"}}type="submit" label="Submit">Submit</Button>
+          </Grid>
+          </Box>
+            </form>
             </div>)
     }
     if(valueSelect=="getAll"){
@@ -684,13 +731,16 @@ const body = () => {
             console.log("inside body")
        return(
             <div>
+              <Box ml={4} pt={2} b={10} > 
                       <DataGrid
                     columns={columns}  
                     autoHeight ={true}
                     rows={test}
+                    sx={{width: "100%"}}
                     getRowId={(row) => Math.random()}
                     
                     />
+              </Box>
                 </div> )
         
 }
@@ -700,6 +750,8 @@ const body = () => {
             <div>
                 <div>
                     <div>
+                    <Box ml={4} pt={2} > 
+
                     <Select
                        onChange={handleChange}
                        label={"select"}
@@ -729,6 +781,7 @@ const body = () => {
 
                             
                     </Select>
+                  </Box>
                     </div>
                         {bodySelect()}
                     <div>

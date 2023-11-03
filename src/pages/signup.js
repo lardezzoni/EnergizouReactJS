@@ -70,7 +70,7 @@ class SignUp extends Component {
                 <Typography variant="h4" marked="center" component="h2" sx={{ mb: 8 }}>
           Cadastre-se
         </Typography>
-                  <Grid wrap="nowrap"
+                  <Grid 
                  sx={{maxHeight: "100%", 
                  verticalAlignment:"center",
                  mx: "auto",
@@ -80,42 +80,46 @@ class SignUp extends Component {
                  justifyContent="center"
                  justify="flex-end"
                  >
-                 
-                  <Input
-                      type="text"
-                      className="form-control"
-                      name="name"
-                      placeholder="Name"
-                      onChange={this.handleInputChange}
-                    />
+                 <TextField
+            id="nome"
+            name="nome"
+            type="nome"
+            placeholder="Nome"
+            required
+            onChange={this.handleInputChange}
+          />
+                  
                   </Grid>
                   <br/>
                   <Grid item xs={12} sm={6} spacing={2}>
-                   <Input
+                   <TextField
                       type="text"
                       className="form-control"
                       name="password"
                       placeholder="Password"
+                      required
                       onChange={this.handleInputChange}
                     />
                    </Grid>
                    <br/>
                    <Grid item xs={12} sm={6}>
-                   <Input
+                   <TextField
                       type="text"
                       className="form-control"
                       name="passwordConfirm"
                       placeholder="Password Confirm"
+                      required
                       onChange={this.handleInputChange}
                     />
                    </Grid>
                    <br/>
                    <Grid item xs={12} sm={6}>
-                   <Input
+                   <TextField
                       type="text"
                       className="form-control"
                       name="email"
                       placeholder="Email"
+                      required
                       onChange={this.handleInputChange}
                     />
                    </Grid>
@@ -125,7 +129,8 @@ class SignUp extends Component {
                    sx={{ mt: 3, mb: 2 }}
                    color="secondary"
                    type="submit"
-                   label="Sign up"         
+                   label="Sign up" 
+                   onClick={this.handleSubmit}        
                  >
                   Sign up
                  </FormButton>
@@ -133,6 +138,10 @@ class SignUp extends Component {
                  </Box>
            </FormControl>
            <br/><br/>
+           <br/>
+                 <br/>
+                 <br/>
+                 
            </div>
           );
 };
