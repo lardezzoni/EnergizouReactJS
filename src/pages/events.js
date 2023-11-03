@@ -6,7 +6,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { styled } from "@mui/material/styles";
-import { Button } from '@mui/base/Button';
+import Button from '../components/Button';
 import { useButton } from '@mui/base/useButton';
 import { Component, setCustomValidity, Alert } from "react";
 import ButtonGroup from '@mui/material/ButtonGroup';
@@ -27,6 +27,7 @@ import { TextField } from "@mui/material";
 import { ClassNames } from '@emotion/react';
 import MenuItem from '@mui/material/MenuItem';
 import { useFetcher } from 'react-router-dom';
+import {useForm} from 'react-hook-form';
 
 function useForceUpdate(){
     const [value, setValue] = useState(0); // integer state
@@ -40,7 +41,7 @@ const columns: GridColDef[] = [
     { field: 'empresa', headerName: 'Empŕesa', width: 150 },
     { field: 'CNPJ', headerName: 'CNPJ', width: 150 },
     { field: 'CEP', headerName: 'CEP', width: 150 },
-    { field: 'endereço', headerName: 'Endereço', width: 150 },
+    { field: 'endereco', headerName: 'Endereço', width: 150 },
     { field: 'numero', headerName: 'Número', width: 150 },
     { field: 'telefone', headerName: 'Telefone', width: 150 },
     { field: 'email', headerName: 'Email', width: 150 }
@@ -79,7 +80,7 @@ const Events = () => {
 
 let item = useRef([])
 
-const [valueSelect, setvalueSelect] = useState('')
+const [valueSelect, setvalueSelect] = useState('none')
 const optionsSelect = {
 
 }
@@ -100,7 +101,25 @@ const [formValue, setformValue]=useState({
 const[formUpdate, setformUpdate] = useState({
 })
 const[errorMessage, seterrorMessage] = useState('')
-
+const {
+    handleSubmit,
+    register,
+    formState: { errors, dirtyFields },
+    watch
+  } = useForm({
+    mode: "onChange",
+    defaultValues: {
+      nome: '',
+            senha:'',
+            empresa:'',
+            CNPJ:'',
+            CEP:'',
+            endereco: '',
+            numero:'',
+            telefone:'',
+            email:''
+    }
+  });
 
 useEffect(() => {
 
@@ -115,17 +134,40 @@ useEffect(() => {
 
 const getItems = useCallback(async() => {
     const res =  await axios.get("http://localhost:3005/api/v1/empresa/test");
-    
-    setTest(res.data.data.data)
+    console.log(res.data.response);
+    console.log(res)
+    setTest(res.data.response)
+    console.log(test);
 })
 
 const handleChangeForm=(e,name)=> {
     const {value}=e.target
-
+    const regExpCNPJ = /^\d{2}\.\d{3}.\d{3}\/\d{4}\-\d{2}$/gm;
+    //CEP de 5 digitos e seguido por 3 digitos
+    const regExpCEP = /^\d{5}\-\d{3}$/gm;
+    //todos caracteres menos especiais
+    const regExpEndereco = /^[a-zA-Z]{0,5}$/gm;
+    const regExpNumero = /^\d{3}$/gm;
+    //telefone 5 digitos '-' e quatro digitos
+    const regExpTelefone=/^\d{5}\-\d{4}$/gm;
+    //regex for email
+    const regExpEmail =/^[a-zA-Z0-9_.+]+(?<!^[0-9]*)@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/gm;
+    if(regExpCEP.test(value)){
+        console.log("INSIDE CHANGE EVENT")
         setformValue(prevState=>({
             ...prevState,
             [name]: value
           }))
+    }
+    else{
+        let newStr = value.replace(regExpCEP);
+        console.log(newStr)
+        setformValue(prevState=>({
+            ...prevState,
+            [name]: newStr
+          }))
+    }
+       
     
     
     console.log(formValue)
@@ -176,9 +218,19 @@ const handleAdd = async(event)=>{
 }
 
 const handleUpdate = async(event)=>{
-    const URL = "http://localhost:3005/api/v1/empresa/" + getValue;
-    console.log(getValue);
-    await axios.patch(URL, formUpdate)
+
+  const formValue = {
+    nome: watch("nome"),
+          senha:watch("senha"),
+          empresa:watch("empresa"),
+          CNPJ:watch("CNPJ"),
+          CEP:watch("CEP"),
+          endereco: watch("endereco"),
+          numero: watch("numero"),
+          telefone:watch("telefone"),
+          email:watch("email")
+  }
+    await axios.patch("http://localhost:3005/api/v1/empresa/CNPJ", {data:formValue})
     .then(res=>{
         console.log("SUCESS UPDATE");
         setformUpdate({
@@ -192,10 +244,11 @@ const handleUpdate = async(event)=>{
     })
 }
 const handleDelete = async (event)=>{
-    await axios({
-        method: 'DELETE',
-        url: "http://localhost:3005/api/v1/empresa/" + getValue,
-      })
+
+  let createForm = {
+      CNPJ: watch("CNPJ")
+    }
+    await axios.delete("http://localhost:3005/api/v1/empresa/CNPJ", {data:createForm})
     .then(res=>{    
         if(res.status==304){
             seterrorMessage("CNPJ não encontrado");
@@ -208,21 +261,22 @@ const handleDelete = async (event)=>{
     })
 }
 const handleGet = async (event) => {
-    const reqBodyCNPJ = {
-        CNPJ: getValue
+    console.log("INSIDE HANDLE GET")
+    console.log(watch("CNPJ"))
+    console.log(watch("email"))
+    const createBody = {
+      CNPJ: watch("CNPJ"),
     }
-    await axios({
-        method: 'GET',
-        url: "http://localhost:3005/api/v1/empresa/" + getValue,
-      })
-    .then(res=>{    
+    await axios.post("http://localhost:3005/api/v1/empresa/CNPJ", createBody)
+    .then(res=>{   
         console.log("HERE")
-        setTest(res.data.data.empresa)
+        console.log(res);
+        setTest(res.data.response)
         console.log(item.current)
     }) 
     .catch(err=>{
         handleError("Empresa não encontrada")
-        setgetValue('')
+        //setgetValue('')
     }) 
     ;}
 const handleError = (error) => {
@@ -232,185 +286,389 @@ const handleError = (error) => {
     seterrorMessage('')
     
 }
+const handleSubmit2 = async (data) =>{
+    console.log(watch("endereço"));
+    
+    const formValue = {
+      nome: watch("nome"),
+            senha:watch("senha"),
+            empresa:watch("empresa"),
+            CNPJ:watch("CNPJ"),
+            CEP:watch("CEP"),
+            endereço: watch("endereco"),
+            numero: watch("numero"),
+            telefone:watch("telefone"),
+            email:watch("email")
+    }
+
+    await axios.post("http://localhost:3005/api/v1/empresa/test",formValue)
+    .then(res=>{    
+        console.log("HERE")
+        console.log('success')
+        setvalueSelect('getAll');
+    })
+    .catch(err=>{
+        console.log(err)
+    })    
+}
+
 const bodySelect = () =>{
     if(valueSelect=="add"){
-      return (         <div>
-                     <TextField
-                        label="Nome"
-                        variant="filled"
-                        color="secondary"
-                        onChange={(e) => handleChangeForm(e, "nome")}
-                        style={{ marginRight: 10 }}
-                        required
-                        onInvalid={(e)=>{e.target.setCustomValidity("error msg:  Nome inválido.")}}
-                    />
-                    <TextField
-                        label="Senha"
-                        variant="filled"
-                        color="secondary"
-                        onChange={(e) => handleChangeForm(e, "senha") }
-                        style={{ marginRight: 10 }}
-                        required
-                    />
-                    <TextField
-                        label="Empresa"
-                        variant="filled"
-                        color="secondary"
-                        onChange={(e) => handleChangeForm(e, "empresa") }
-                        style={{ marginRight: 10 }}
-                        required
-                    />
-                     <TextField
-                        label="CNPJ"
-                        variant="filled"
-                        color="secondary"
-                        onChange={(e) => handleChangeForm(e, "CNPJ") }
-                        style={{ marginRight: 10 }}
-                        required
-                    />
-                     <TextField
-                        label="CEP"
-                        variant="filled"
-                        color="secondary"
-                        onChange={(e) => handleChangeForm(e, "CEP") }
-                        style={{ marginRight: 10 }}
-                        required
-                    />
-                     <TextField
-                        label="Endereço"
-                        variant="filled"
-                        color="secondary"
-                        onChange={(e) => handleChangeForm(e, "endereço") }
-                        style={{ marginRight: 10 }}
-                        required
-                    />
-                     <TextField
-                        label="Número"
-                        variant="filled"
-                        color="secondary"
-                        onChange={(e) => handleChangeForm(e, "numero") }
-                        style={{ marginRight: 10 }}
-                        required
-                    />
-                     <TextField
-                        label="Telefone"
-                        variant="filled"
-                        color="secondary"
-                        onChange={(e) => handleChangeForm(e, "telefone") }
-                        required
-                     
-                    />
-                     <TextField
-                        label="Email"
-                        variant="filled"
-                        color="secondary"
-                        onChange={(e) => handleChangeForm(e,"email") }
-                        style={{ marginRight: 10 }}
-                        required
-                    />
-                    <Button type="submit" style={{maxWidth: '30px', maxHeight: '30px', minWidth: '30px', minHeight: '30px'}}label="Submit" onClick={handleAdd}></Button>
-                    </div> )
+      return (        
+      <div>
+      <form onSubmit={handleSubmit((data) => handleSubmit2(data))}>
+      <TextField
+            {...register("nome")}
+            id="nome"
+            name="nome"
+            type="nome"
+            label="Nome"
+            required
+            autoComplete="off"
+            className={`input w-full ${
+              !errors.nome && dirtyFields.nome && "!bg-green-50"
+            }`}
+          />
+        
+        <span>{errors.nome?.message}</span>
+        <TextField
+            {...register("senha")}
+            id="senha"
+            name="senha"
+            type="senha"
+            label="Senha"
+            required
+            autoComplete="off"
+            
+          />
+          <TextField
+            {...register("empresa")}
+            id="empresa"
+            name="empresa"
+            type="empresa"
+            label="Empresa"
+            required
+            autoComplete="off"
+            
+          />
+          <TextField
+            {...register("CNPJ", {
+              pattern: {
+                value: /^[0-9]{2}\.[0-9]{3}\.[0-9]{3}\/[0-9]{4}\-[0-9]{2}$/,
+                message: "Por favor, use o formato XX.XXX.XXX/XXXX-XX"
+              }
+            })}
+            id="CNPJ"
+            name="CNPJ"
+            type="CNPJ"
+            label="CNPJ"
+            required
+            autoComplete="off"
+            className={`input w-full ${
+              !errors.CNPJ && dirtyFields.CNPJ && "!bg-green-50"
+            }`}
+          />
+          <span>{errors.CNPJ?.message}</span>
+          <TextField
+            {...register("CEP", {
+              pattern: {
+                value: /^[0-9]{5}\-[0-9]{3}$/,
+                message: "Por favor, use o formato XXXXX-XXX"
+              }
+            })}
+            id="CEP"
+            name="CEP"
+            type="CEP"
+            label="CEP"
+            required
+            autoComplete="off"
+            className={`input w-full ${
+              !errors.CEP && dirtyFields.CEP && "!bg-green-50"
+            }`}
+          />
+                  <span>{errors.CEP?.message}</span>
+
+          <TextField
+            {...register("endereco", {
+              pattern: {
+                value: /^[a-zA-Z]{0,5}$/,
+                message: "Por favor, escreva até 5 letras no formato XXXXX"
+              }
+            })}
+            id="endereco"
+            name="endereco"
+            type="endereco"
+            label="Endereço"
+            required
+            autoComplete="off"
+            className={`input w-full ${
+              !errors.endereço && dirtyFields.endereço && "!bg-green-50"
+            }`}
+          />
+          <span>{errors.endereço?.message}</span>
+
+          <TextField
+            {...register("numero", {
+              pattern: {
+                value: /^[0-9]{3}$/,
+                message: "Por favor, use o formato XXX"
+              }
+            })}
+            id="numero"
+            name="numero"
+            type="numero"
+            label="numero"
+            required
+            autoComplete="off"
+            className={`input w-full ${
+              !errors.numero && dirtyFields.numero && "!bg-green-50"
+            }`}
+          />
+          <span>{errors.numero?.message}</span>
+
+          <TextField
+            {...register("telefone", {
+              pattern: {
+                value: /^[0-9]{5}\-[0-9]{4}$/,
+                message: "Por favor, use o formato XXXXX-XXXX"
+              }
+            })}
+            id="telefone"
+            name="telefone"
+            type="telefone"
+            label="Telefone"
+            required
+            autoComplete="off"
+            className={`input w-full ${
+              !errors.telefone && dirtyFields.telefone && "!bg-green-50"
+            }`}
+          />
+          <span>{errors.telefone?.message}</span>
+       
+          <TextField
+            {...register("email", {
+              pattern: {
+                value: /^[a-zA-Z0-9_.+]+(?<!^[0-9]*)@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
+                message: "Por favor, escreva um email válido"
+              }
+            })}
+            id="email"
+            name="email"
+            type="email"
+            label="Email"
+            required
+            autoComplete="off"
+            className={`input w-full ${
+              !errors.email && dirtyFields.email && "!bg-green-50"
+            }`}
+          />
+          <span>{errors.email?.message}</span>
+
+        <Button style={{ display: "block" }} onClick={handleSubmit2}>submit</Button>
+    </form> </div>)
     }
     if(valueSelect=="delete"){
-        return(<div>
-            <FormControl onSubmit={handleDelete}>  
-              <TextField
-              label="CNPJ"
-              variant="filled"
-              color="secondary"
-              onInput={e=>setgetValue(e.target.value)}
-              style={{ marginRight: 10 }}
-          />
-          <Button type="submit" style={{maxWidth: '30px', maxHeight: '30px', minWidth: '30px',
-           minHeight: '30px'}}label="Submit" onClick={handleDelete}></Button></FormControl>
-          </div>)
+      return(<div>
+        <form onSubmit={handleSubmit((data)=>handleDelete(data))}>  
+        <TextField
+      {...register("CNPJ", {
+        pattern: {
+          value: /^[0-9]{2}\.[0-9]{3}\.[0-9]{3}\/[0-9]{4}\-[0-9]{2}$/,
+          message: "Por favor, use o formato XX.XXX.XXX/XXXX-XX"
+        }
+      })}
+      id="CNPJ"
+      name="CNPJ"
+      type="CNPJ"
+      label="CNPJ"
+      required
+      autoComplete="off"
+      className={`input w-full ${
+        !errors.CNPJ && dirtyFields.CNPJ && "!bg-green-50"
+      }`}
+    />
+    <span>{errors.CNPJ?.message}</span>
+      
+      <Button type="submit" style={{maxWidth: '30px', maxHeight: '30px', minWidth: '30px', minHeight: '30px'}}label="Submit">Submit</Button></form>
+      </div>)
     }
     if(valueSelect=="update"){
-           return(  
-           
-           <div>
-             <FormControl onSubmit={handleUpdate}>  
-              <TextField
-              label="CNPJ"
-              variant="filled"
-              color="secondary"
-              onInput={e=>setgetValue(e.target.value)}
-              style={{ marginRight: 10 }}
-          />
-          </FormControl>
-            
+      return (        
+        <div>
+        <form onSubmit={handleSubmit((data) => handleUpdate(data))}>
+        <TextField
+              {...register("nome")}
+              id="nome"
+              name="nome"
+              type="nome"
+              label="Nome"
+              
+              autoComplete="off"
+              className={`input w-full ${
+                !errors.nome && dirtyFields.nome && "!bg-green-50"
+              }`}
+            />
+          
+          <span>{errors.nome?.message}</span>
           <TextField
-                        label="Nome"
-                        variant="filled"
-                        color="secondary"
-                        onChange={(e) => handleUpdateForm(e, "nome") }
-                        style={{ marginRight: 10 }}
-                    />
-                    <TextField
-                        label="Senha"
-                        variant="filled"
-                        color="secondary"
-                        onChange={(e) => handleUpdateForm(e, "senha") }
-                        style={{ marginRight: 10 }}
-                    />
-                    <TextField
-                        label="Empresa"
-                        variant="filled"
-                        color="secondary"
-                        onChange={(e) => handleUpdateForm(e, "empresa") }
-                        style={{ marginRight: 10 }}
-                    />
-                     <TextField
-                        label="CEP"
-                        variant="filled"
-                        color="secondary"
-                        onChange={(e) => handleUpdateForm(e, "CEP") }
-                        style={{ marginRight: 10 }}
-                    />
-                     <TextField
-                        label="Endereço"
-                        variant="filled"
-                        color="secondary"
-                        onChange={(e) => handleUpdateForm(e, "endereço") }
-                        style={{ marginRight: 10 }}
-                    />
-                     <TextField
-                        label="Número"
-                        variant="filled"
-                        color="secondary"
-                        onChange={(e) => handleUpdateForm(e, "numero") }
-                        style={{ marginRight: 10 }}
-                    />
-                     <TextField
-                        label="Telefone"
-                        variant="filled"
-                        color="secondary"
-                        onChange={(e) => handleUpdateForm(e, "telefone") }
-                        style={{ marginRight: 10 }}
-                    />
-                     <TextField
-                        label="Email"
-                        variant="filled"
-                        color="secondary"
-                        onChange={(e) => handleUpdateForm(e,"email") }
-                        style={{ marginRight: 10 }}
-                    />
-                    <Button type="submit" style={{maxWidth: '30px', maxHeight: '30px', 
-                    minWidth: '30px', minHeight: '30px'}}label="Submit" onClick={handleUpdate}></Button>
-
-                    <br /></div> )
+              {...register("senha")}
+              id="senha"
+              name="senha"
+              type="senha"
+              label="Senha"
+              
+              autoComplete="off"
+              
+            />
+            <TextField
+              {...register("empresa")}
+              id="empresa"
+              name="empresa"
+              type="empresa"
+              label="Empresa"
+              required
+              autoComplete="off"
+              
+            />
+            <TextField
+              {...register("CNPJ", {
+                pattern: {
+                  value: /^[0-9]{2}\.[0-9]{3}\.[0-9]{3}\/[0-9]{4}\-[0-9]{2}$/,
+                  message: "Por favor, use o formato XX.XXX.XXX/XXXX-XX"
+                }
+              })}
+              id="CNPJ"
+              name="CNPJ"
+              type="CNPJ"
+              label="CNPJ"
+              required
+              autoComplete="off"
+              className={`input w-full ${
+                !errors.CNPJ && dirtyFields.CNPJ && "!bg-green-50"
+              }`}
+            />
+            <span>{errors.CNPJ?.message}</span>
+            <TextField
+              {...register("CEP", {
+                pattern: {
+                  value: /^[0-9]{5}\-[0-9]{3}$/,
+                  message: "Por favor, use o formato XXXXX-XXX"
+                }
+              })}
+              id="CEP"
+              name="CEP"
+              type="CEP"
+              label="CEP"
+              
+              autoComplete="off"
+              className={`input w-full ${
+                !errors.CEP && dirtyFields.CEP && "!bg-green-50"
+              }`}
+            />
+                    <span>{errors.CEP?.message}</span>
+  
+            <TextField
+              {...register("endereco", {
+                pattern: {
+                  value: /^[a-zA-Z]{0,5}$/,
+                  message: "Por favor, escreva até 5 letras no formato XXXXX"
+                }
+              })}
+              id="endereco"
+              name="endereco"
+              type="endereco"
+              label="Endereço"
+              
+              autoComplete="off"
+              className={`input w-full ${
+                !errors.endereço && dirtyFields.endereço && "!bg-green-50"
+              }`}
+            />
+            <span>{errors.endereço?.message}</span>
+  
+            <TextField
+              {...register("numero", {
+                pattern: {
+                  value: /^[0-9]{3}$/,
+                  message: "Por favor, use o formato XXX"
+                }
+              })}
+              id="numero"
+              name="numero"
+              type="numero"
+              label="numero"
+              
+              autoComplete="off"
+              className={`input w-full ${
+                !errors.numero && dirtyFields.numero && "!bg-green-50"
+              }`}
+            />
+            <span>{errors.numero?.message}</span>
+  
+            <TextField
+              {...register("telefone", {
+                pattern: {
+                  value: /^[0-9]{5}\-[0-9]{4}$/,
+                  message: "Por favor, use o formato XXXXX-XXXX"
+                }
+              })}
+              id="telefone"
+              name="telefone"
+              type="telefone"
+              label="Telefone"
+              required
+              autoComplete="off"
+              className={`input w-full ${
+                !errors.telefone && dirtyFields.telefone && "!bg-green-50"
+              }`}
+            />
+            <span>{errors.telefone?.message}</span>
+         
+            <TextField
+              {...register("email", {
+                pattern: {
+                  value: /^[a-zA-Z0-9_.+]+(?<!^[0-9]*)@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
+                  message: "Por favor, escreva um email válido"
+                }
+              })}
+              id="email"
+              name="email"
+              type="email"
+              label="Email"
+              
+              autoComplete="off"
+              className={`input w-full ${
+                !errors.email && dirtyFields.email && "!bg-green-50"
+              }`}
+            />
+            <span>{errors.email?.message}</span>
+  
+          <Button style={{ display: "block" }} onClick={handleUpdate}>submit</Button>
+      </form> </div>)
     }
     if(valueSelect=="get"){
             return(<div>
-              <FormControl onSubmit={handleGet}>  
-                <TextField
-                label="CNPJ"
-                variant="filled"
-                color="secondary"
-                onInput={e=>setgetValue(e.target.value)}
-                style={{ marginRight: 10 }}
-            />
-            <Button type="submit" style={{maxWidth: '30px', maxHeight: '30px', minWidth: '30px', minHeight: '30px'}}label="Submit" onClick={handleGet}></Button></FormControl>
+              <form onSubmit={handleSubmit((data)=>handleGet(data))}>  
+              <TextField
+            {...register("CNPJ", {
+              pattern: {
+                value: /^[0-9]{2}\.[0-9]{3}\.[0-9]{3}\/[0-9]{4}\-[0-9]{2}$/,
+                message: "Por favor, use o formato XX.XXX.XXX/XXXX-XX"
+              }
+            })}
+            id="CNPJ"
+            name="CNPJ"
+            type="CNPJ"
+            label="CNPJ"
+            required
+            autoComplete="off"
+            className={`input w-full ${
+              !errors.CNPJ && dirtyFields.CNPJ && "!bg-green-50"
+            }`}
+          />
+          <span>{errors.CNPJ?.message}</span>
+            
+            <Button type="submit" style={{maxWidth: '30px', maxHeight: '30px', minWidth: '30px', minHeight: '30px'}}label="Submit">Submit</Button></form>
             </div>)
     }
     if(valueSelect=="getAll"){
@@ -424,9 +682,9 @@ const body = () => {
 
             console.log(item.current);
             console.log("inside body")
-        return(
+       return(
             <div>
-                        <DataGrid
+                      <DataGrid
                     columns={columns}  
                     autoHeight ={true}
                     rows={test}
@@ -434,7 +692,8 @@ const body = () => {
                     
                     />
                 </div> )
-        }
+        
+}
         return(
           
             <>
@@ -444,7 +703,7 @@ const body = () => {
                     <Select
                        onChange={handleChange}
                        label={"select"}
-                       value={optionsSelect}
+                       value={valueSelect}
                        onOpen={() => {
                               document.querySelector(".MuiModal-backdrop")?.click();
                         }}
@@ -461,7 +720,7 @@ const body = () => {
                             backgroundColor: "#b34b4b"
                         }
                         }}
-                    >
+                    >     <MenuItem value="none" disabled hidden>Selecione uma opção</MenuItem>
                             <MenuItem value={'add'}>Adicionar</MenuItem>
                             <MenuItem value={'delete'}>Deletar por CNPJ</MenuItem>
                             <MenuItem value={"update"}>Modificar empresa</MenuItem>
@@ -487,7 +746,8 @@ const body = () => {
             </div>
         </>
         )
-    }
+    
+}
 
 
 export default Events;

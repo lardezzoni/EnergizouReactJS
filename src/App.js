@@ -31,9 +31,8 @@ function App() {
                     path="/events"
                     element={<Events />}
                        />
-                 </Route>
                 
-
+                </Route>
                 <Route path="/team" element={<Teams />} />
                 <Route
                     path="/sign-up"

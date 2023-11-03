@@ -11,11 +11,11 @@ export default function ImagemPrincipal() {
     <ImagemLayout
       sxBackground={{
         backgroundImage: `url(${backgroundImage})`,
-        backgroundColor: '#7fc7d9', // Average color of the background image.
+        backgroundColor: '#7fc7d9', 
         backgroundPosition: 'center',
       }}
     >
-      {/* Increase the network loading priority of the background image. */}
+      {}
       <img
         style={{ display: 'none' }}
         src={backgroundImage}
@@ -30,7 +30,7 @@ export default function ImagemPrincipal() {
         variant="h5"
         sx={{ mb: 4, mt: { xs: 4, sm: 10 } }}
       >
-        Website criado com NodeJS, ReactJS e MongoDB (NoSQL)
+        Website criado com NodeJS, ReactJS e MySQL
       </Typography>
       
       <Typography variant="body2" color="inherit" sx={{ mt: 2 }}>

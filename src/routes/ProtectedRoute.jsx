@@ -8,7 +8,8 @@ const ProtectedRoute = () => {
   
   useEffect(()=>{
     let validToken = localStorage.getItem('token');
-      
+    console.log("INSIDE PROTECTED ROUTE")
+    console.log(validToken)
     const validJson = {
       token: validToken
     };    

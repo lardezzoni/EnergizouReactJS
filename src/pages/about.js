@@ -70,8 +70,7 @@ const About = () => {
                 <Box sx={number}>1.</Box>
                
                 <Typography variant="h5" align="center">
-                    Crie sua conta, ou faça login como lhardezzoni@gmail.com com a senha password123. Lembrando que o server precisa estar nas portas indicadas no README do github
-                </Typography>
+                    Leia as instruções no README do github e então faça sign-up                </Typography>
               </Box>
             </Grid>
             <Grid item xs={12} md={4}>

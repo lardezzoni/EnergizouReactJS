@@ -32,19 +32,21 @@ class Login extends Component {
       axios
         .post('http://localhost:3005/api/v1/users/login', loginForm)
         .then(res=> {
+
+
           if(res.status === 200){
-            if (res.data.token) {
-                localStorage.setItem('token', res.data.token);
-            }
+
+            axios.defaults.headers.common["Authorization"] = "Bearer " + res.data.token;
+
+          localStorage.setItem('token', res.data.token);
+            
           this.setState({ isLoggedIn: true})
         }})
         .catch(err => {
-          console.log("INSIDE ERROR LOGIN")
 
           
 
         });
-        console.log("THIS SHOULDNT BE HERE")
     };
   render() {
 

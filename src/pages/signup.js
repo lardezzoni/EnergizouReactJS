@@ -32,7 +32,7 @@ class SignUp extends Component {
         });
       };
     
-      handleSubmit = e => {
+      handleSubmit = async (e) => {
         e.preventDefault();
     
         const { name, password, passwordConfirm, email } = this.state;
@@ -44,7 +44,7 @@ class SignUp extends Component {
           email,
         };
     
-        axios
+        await axios
           .post('http://localhost:3005/api/v1/users/signup', signupForm)
           .then(res => {
             console.log(res.status)
@@ -61,69 +61,26 @@ class SignUp extends Component {
             return <Navigate to = {{ pathname: "/login" }} />;
           }
         return (
-            <div style={{
-                display: "flex",
-                justifyContent: "centre",
-                alignItems: "centre",
-                height: "100vh",
-            }}       >
-              <br />
-              <div className="container">
-                <h1> SIGN UP</h1>
-                <form onSubmit={this.handleSubmit}>
-                  <div style={{ width: '30%' }} className="form-group">
-                    <input
-                      type="text"
-                      className="form-control"
-                      name="name"
-                      placeholder="Name"
-                      onChange={this.handleInputChange}
-                    />
-                  </div>
-                  <br />
-                  <div style={{ width: '30%' }} className="form-group">
-                    <input
-                      type="text"
-                      className="form-control"
-                      name="password"
-                      placeholder="Password"
-                      onChange={this.handleInputChange}
-                    />
-                  </div>
-                  <div style={{ width: '30%' }} className="form-group">
-                    <input
-                      type="text"
-                      className="form-control"
-                      name="passwordConfirm"
-                      placeholder="Password Confirm"
-                      onChange={this.handleInputChange}
-                    />
-                  </div>
-                  <br />
-                  <div style={{ width: '30%' }} className="form-group">
-                    <input
-                      type="text"
-                      className="form-control"
-                      name="email"
-                      placeholder="Email"
-                      onChange={this.handleInputChange}
-                    />
-                  </div>
-                  <br />
-                  <div style={{ width: '30%' }}>
-                    <button className="btn btn-success" type="submit">
-                      Create
-                    </button>
-                  </div>
-                </form>
-                
-              
+           <div>
+             
              <FormControl
              onSubmit={this.handleSubmit}
            >
-               <Box component="form" onSubmit={this.handleSubmit} noValidate sx={{ mt: 6 }}>
-                 <Grid container spacing={2}>
-                  <Grid item xs={12} sm={6}>
+                <Box ml={65} pt={10} b={10} > 
+                <Typography variant="h4" marked="center" component="h2" sx={{ mb: 8 }}>
+          Cadastre-se
+        </Typography>
+                  <Grid wrap="nowrap"
+                 sx={{maxHeight: "100%", 
+                 verticalAlignment:"center",
+                 mx: "auto",
+                }}
+                 alignItems="center"
+                 spacing={0}
+                 justifyContent="center"
+                 justify="flex-end"
+                 >
+                 
                   <Input
                       type="text"
                       className="form-control"
@@ -132,7 +89,8 @@ class SignUp extends Component {
                       onChange={this.handleInputChange}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <br/>
+                  <Grid item xs={12} sm={6} spacing={2}>
                    <Input
                       type="text"
                       className="form-control"
@@ -141,6 +99,7 @@ class SignUp extends Component {
                       onChange={this.handleInputChange}
                     />
                    </Grid>
+                   <br/>
                    <Grid item xs={12} sm={6}>
                    <Input
                       type="text"
@@ -150,6 +109,7 @@ class SignUp extends Component {
                       onChange={this.handleInputChange}
                     />
                    </Grid>
+                   <br/>
                    <Grid item xs={12} sm={6}>
                    <Input
                       type="text"
@@ -159,9 +119,7 @@ class SignUp extends Component {
                       onChange={this.handleInputChange}
                     />
                    </Grid>
-                 </Grid>
-                 
-                
+                   <br/>
                  
                  <FormButton
                    sx={{ mt: 3, mb: 2 }}
@@ -171,11 +129,11 @@ class SignUp extends Component {
                  >
                   Sign up
                  </FormButton>
-               </Box>
-             
+               
+                 </Box>
            </FormControl>
+           <br/><br/>
            </div>
-            </div>
           );
 };
 }
