@@ -9,7 +9,7 @@ import {
 
 import About from "./pages/about";
 import Events from "./pages/events";
-import Teams from "./pages/team";
+import Contato from "./pages/contato";
 import SignUp from "./pages/signup";
 import Login from "./pages/login";
 import Logout from "./pages/logout";
@@ -33,7 +33,7 @@ function App() {
                        />
                 
                 </Route>
-                <Route path="/team" element={<Teams />} />
+                <Route path="/contato" element={<Contato />} />
                 <Route
                     path="/sign-up"
                     element={<SignUp />}

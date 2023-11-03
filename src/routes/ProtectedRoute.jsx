@@ -1,5 +1,6 @@
 import { Navigate, Outlet } from "react-router-dom";
-import React, { Component, useCallback, useEffect, useRef, useState } from 'react';
+import React,{  useRef} from 'react';
+import { useEffect } from "react";
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 const ProtectedRoute = () => {
@@ -19,7 +20,7 @@ const ProtectedRoute = () => {
     .then(res=> {
       console.log(res)
       
-        if(res.status == 200){
+        if(res.status === 200){
               isValid.current = true;
               console.log(isValid.current);
               console.log("INSIDE PROTECTED2")
@@ -35,10 +36,10 @@ const ProtectedRoute = () => {
       navigate('/login') 
     })
 
-  }, [isValid])
+  }, [isValid, navigate])
   
-  const handleLogin = useCallback(async ()=>{
-    if (isValid.current==true) {
+  const handleLogin = async ()=>{
+    if (isValid.current===true) {
       return <Navigate to = {{ pathname: "/events" }} />;
   
     }
@@ -48,7 +49,7 @@ const ProtectedRoute = () => {
     
       
     }
-  })
+  }
   handleLogin()
   return (
     <>

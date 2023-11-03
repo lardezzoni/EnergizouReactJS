@@ -1,32 +1,13 @@
 import axios from 'axios';
-import { useState, useEffect,setUpdatedState, useRef, useCallback, useReducer } from 'react';
-import { NoSsr } from '@mui/base/NoSsr';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { useState, useEffect, useRef } from 'react';
+import Select from '@mui/material/Select';
 
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import { styled } from "@mui/material/styles";
 import Button from '../components/Button';
-import { useButton } from '@mui/base/useButton';
-import { Component, setCustomValidity, Alert } from "react";
-import ButtonGroup from '@mui/material/ButtonGroup';
-import FormControl from '@mui/material/FormControl';
-import {Container, Stack, checkboxClasses} from "@mui/material";
 
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead, { tableHeadClasses } from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import { withStyles, makeStyles} from "@mui/styles";
-import { createTheme, ThemeProvider } from "@mui/styles";
-import { DataGrid, GridRowsProp, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { TextField } from "@mui/material"; 
-import { ClassNames } from '@emotion/react';
 import MenuItem from '@mui/material/MenuItem';
-import { useFetcher } from 'react-router-dom';
 import {useForm} from 'react-hook-form';
 import Grid from '@mui/material/Grid';
 
@@ -43,59 +24,15 @@ const columns: GridColDef[] = [
     { field: 'email', headerName: 'Email', width: 150 }
   ];
 
-const StyledTableCell = withStyles((theme) => ({
-    head: {
-        color: "white",
-        whiteSpace: "nowrap",
-        fontPalette: "white"
-      },
-      body: {
-        fontPalette: "white",
-        whiteSpace: "nowrap"
-      }
-    
-  }))(TableCell);
-  const useStyles = makeStyles({
-
-    root: {
-        "& .MuiTableCell-head": {
-            color: "white",
-            backgroundColor: "blue"
-        },
-    }
-});
-  
-  const StyledTableRow = withStyles((theme) => ({
-
-  }))(TableRow);
-
-
-
   
 const Events = () => {
 
 let item = useRef([])
 
 const [valueSelect, setvalueSelect] = useState('none')
-const optionsSelect = {
 
-}
-const [getValue, setgetValue]= useState('')
 const [test, setTest] = useState([])
-const [update, setUpdate] = useState(0);
-const [formValue, setformValue]=useState({
-    nome: '',
-    senha:'',
-    empresa:'',
-    CNPJ:0,
-    CEP:0,
-    endereço: '',
-    numero: 0,
-    telefone:0,
-    email:''
-})
-const[formUpdate, setformUpdate] = useState({
-})
+
 const[errorMessage, seterrorMessage] = useState('')
 const {
     handleSubmit,
@@ -119,99 +56,28 @@ const {
 
 useEffect(() => {
 
-    if(valueSelect=="getAll"){
+    if(valueSelect==="getAll"){
         getItems();
     }
-    if(valueSelect==''){
+    if(valueSelect===''){
         getItems();
     }
 }, [valueSelect, errorMessage])
 
 
-const getItems = useCallback(async() => {
+const getItems = async() => {
     const res =  await axios.get("http://localhost:3005/api/v1/empresa/test");
-    console.log(res.data.response);
-    console.log(res)
+    
     setTest(res.data.response)
-    console.log(test);
-})
+   
+}
 
-const handleChangeForm=(e,name)=> {
-    const {value}=e.target
-    const regExpCNPJ = /^\d{2}\.\d{3}.\d{3}\/\d{4}\-\d{2}$/gm;
-    //CEP de 5 digitos e seguido por 3 digitos
-    const regExpCEP = /^\d{5}\-\d{3}$/gm;
-    //todos caracteres menos especiais
-    const regExpEndereco = /^[a-zA-Z]{0,5}$/gm;
-    const regExpNumero = /^\d{3}$/gm;
-    //telefone 5 digitos '-' e quatro digitos
-    const regExpTelefone=/^\d{5}\-\d{4}$/gm;
-    //regex for email
-    const regExpEmail =/^[a-zA-Z0-9_.+]+(?<!^[0-9]*)@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/gm;
-    if(regExpCEP.test(value)){
-        console.log("INSIDE CHANGE EVENT")
-        setformValue(prevState=>({
-            ...prevState,
-            [name]: value
-          }))
-    }
-    else{
-        let newStr = value.replace(regExpCEP);
-        console.log(newStr)
-        setformValue(prevState=>({
-            ...prevState,
-            [name]: newStr
-          }))
-    }
-       
-    
-    
-    console.log(formValue)
-  }
-const handleUpdateForm=(e,name)=> {
-    const {value}=e.target
-    setformUpdate(prevState=>({
-      ...prevState,
-      [name]: value
-    }))
-    console.log(formValue)
-  }
+
 
 const handleChange = (event) => {
     setvalueSelect(event.target.value);
   };
-const handleAdd = async(event)=>{
-    await axios.post("http://localhost:3005/api/v1/empresa/test",formValue)
-    .then(res=>{    
-        console.log("HERE")
-        console.log('success')
-        setformValue({
-            nome: '',
-            senha:'',
-            empresa:'',
-            CNPJ:0,
-            CEP:0,
-            endereço: '',
-            numero: 0,
-            telefone:0,
-            email:''
-        })
-        setvalueSelect('getAll');
-    })
-    .catch(err=>{
-        setformValue({
-            nome: '',
-            senha:'',
-            empresa:'',
-            CNPJ:0,
-            CEP:0,
-            endereço: '',
-            numero: 0,
-            telefone:0,
-            email:''
-        })
-    })
-}
+
 
 const handleUpdate = async(event)=>{
 
@@ -229,14 +95,11 @@ const handleUpdate = async(event)=>{
     await axios.patch("http://localhost:3005/api/v1/empresa/CNPJ", {data:formValue})
     .then(res=>{
         console.log("SUCESS UPDATE");
-        setformUpdate({
-
-        })
+        
         setvalueSelect('getAll');
     })
     .catch(err=>{
         handleError("Empresa não encontrada")
-        setgetValue('')
     })
 }
 const handleDelete = async (event)=>{
@@ -246,34 +109,30 @@ const handleDelete = async (event)=>{
     }
     await axios.delete("http://localhost:3005/api/v1/empresa/CNPJ", {data:createForm})
     .then(res=>{    
-        if(res.status==304){
+        if(res.status===304){
             seterrorMessage("CNPJ não encontrado");
         }
         setvalueSelect('getAll');
     })
     .catch(err=>{
         handleError("Empresa não encontrada")
-        setgetValue('')
     })
 }
 const handleGet = async (event) => {
-    console.log("INSIDE HANDLE GET")
-    console.log(watch("CNPJ"))
-    console.log(watch("email"))
+    
+
     const createBody = {
       CNPJ: watch("CNPJ"),
     }
     await axios.post("http://localhost:3005/api/v1/empresa/CNPJ", createBody)
     .then(res=>{   
-        console.log("HERE")
-        console.log(res);
+        
         setTest(res.data.response)
-        console.log(item.current)
     }) 
     .catch(err=>{
         handleError("Empresa não encontrada")
-        //setgetValue('')
-    }) 
+
+      }) 
     ;}
 const handleError = (error) => {
 
@@ -309,7 +168,7 @@ const handleSubmit2 = async (data) =>{
 }
 
 const bodySelect = () =>{
-    if(valueSelect=="add"){
+    if(valueSelect==="add"){
       return (        
       <div>
       <form onSubmit={handleSubmit((data) => handleSubmit2(data))}>
@@ -351,7 +210,7 @@ const bodySelect = () =>{
           <TextField
             {...register("CNPJ", {
               pattern: {
-                value: /^[0-9]{2}\.[0-9]{3}\.[0-9]{3}\/[0-9]{4}\-[0-9]{2}$/,
+                value: /^[0-9]{2}\.[0-9]{3}\.[0-9]{3}\/[0-9]{4}-[0-9]{2}$/,
                 message: "Por favor, use o formato XX.XXX.XXX/XXXX-XX"
               }
             })}
@@ -376,7 +235,7 @@ const bodySelect = () =>{
           <TextField
             {...register("CEP", {
               pattern: {
-                value: /^[0-9]{5}\-[0-9]{3}$/,
+                value: /^[0-9]{5}-[0-9]{3}$/,
                 message: "Por favor, use o formato XXXXX-XXX"
               }
             })}
@@ -430,7 +289,7 @@ const bodySelect = () =>{
           <TextField
             {...register("telefone", {
               pattern: {
-                value: /^[0-9]{5}\-[0-9]{4}$/,
+                value: /^[0-9]{5}-[0-9]{4}$/,
                 message: "Por favor, use o formato XXXXX-XXXX"
               }
             })}
@@ -478,7 +337,7 @@ const bodySelect = () =>{
           </Box>
     </form> </div>)
     }
-    if(valueSelect=="delete"){
+    if(valueSelect==="delete"){
       return(<div>
         <form onSubmit={handleSubmit((data)=>handleDelete(data))}>
         <Box ml={4} pt={2} > 
@@ -486,7 +345,7 @@ const bodySelect = () =>{
         <TextField
       {...register("CNPJ", {
         pattern: {
-          value: /^[0-9]{2}\.[0-9]{3}\.[0-9]{3}\/[0-9]{4}\-[0-9]{2}$/,
+          value: /^[0-9]{2}\.[0-9]{3}\.[0-9]{3}\/[0-9]{4}-[0-9]{2}$/,
           message: "Por favor, use o formato XX.XXX.XXX/XXXX-XX"
         }
       })}
@@ -510,7 +369,7 @@ const bodySelect = () =>{
       </form>
       </div>)
     }
-    if(valueSelect=="update"){
+    if(valueSelect==="update"){
       return (        
         <div>
         <form onSubmit={handleSubmit((data) => handleUpdate(data))}>
@@ -520,7 +379,7 @@ const bodySelect = () =>{
         <TextField
               {...register("CNPJ", {
                 pattern: {
-                  value: /^[0-9]{2}\.[0-9]{3}\.[0-9]{3}\/[0-9]{4}\-[0-9]{2}$/,
+                  value: /^[0-9]{2}\.[0-9]{3}\.[0-9]{3}\/[0-9]{4}-[0-9]{2}$/,
                   message: "Por favor, use o formato XX.XXX.XXX/XXXX-XX"
                 }
               })}
@@ -577,7 +436,7 @@ const bodySelect = () =>{
             <TextField
               {...register("CEP", {
                 pattern: {
-                  value: /^[0-9]{5}\-[0-9]{3}$/,
+                  value: /^[0-9]{5}-[0-9]{3}$/,
                   message: "Por favor, use o formato XXXXX-XXX"
                 }
               })}
@@ -638,7 +497,7 @@ const bodySelect = () =>{
             <TextField
               {...register("telefone", {
                 pattern: {
-                  value: /^[0-9]{5}\-[0-9]{4}$/,
+                  value: /^[0-9]{5}-[0-9]{4}$/,
                   message: "Por favor, use o formato XXXXX-XXXX"
                 }
               })}
@@ -685,7 +544,7 @@ const bodySelect = () =>{
           </Box>
       </form> </div>)
     }
-    if(valueSelect=="get"){
+    if(valueSelect==="get"){
             return(<div>
               <form onSubmit={handleSubmit((data)=>handleGet(data))}>  
               <Box ml={4} pt={2} > 
@@ -693,7 +552,7 @@ const bodySelect = () =>{
               <TextField
             {...register("CNPJ", {
               pattern: {
-                value: /^[0-9]{2}\.[0-9]{3}\.[0-9]{3}\/[0-9]{4}\-[0-9]{2}$/,
+                value: /^[0-9]{2}\.[0-9]{3}\.[0-9]{3}\/[0-9]{4}-[0-9]{2}$/,
                 message: "Por favor, use o formato XX.XXX.XXX/XXXX-XX"
               }
             })}
@@ -718,7 +577,7 @@ const bodySelect = () =>{
             </form>
             </div>)
     }
-    if(valueSelect=="getAll"){
+    if(valueSelect==="getAll"){
         return <div></div>
     }
     else{

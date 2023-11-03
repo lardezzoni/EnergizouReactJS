@@ -1,7 +1,4 @@
 import React from "react";
-import background from "./../img/frontimg.jpg"
-import { Component } from "react";
-import { AspectRatio } from 'react-aspect-ratio';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
@@ -23,10 +20,6 @@ const item = {
     fontWeight: 'medium',
   };
   
-  const image = {
-    height: 55,
-    my: 4,
-  };
 const About = () => {
     return (
         <>

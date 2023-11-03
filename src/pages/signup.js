@@ -1,17 +1,12 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { Navigate } from "react-router-dom"
-import {Field} from 'react-final-form'
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import Link from '@mui/material/Link';
 import Typography from '../components/Typography';
 import FormControl from '@mui/material/FormControl';
 import TextField from '../components/TextField';
-import { Input } from '@mui/material';
-import RFTextField from '../components/RFTextField';
 import FormButton from '../components/FormButton';
-import FormFeedback from '../components/FormFeedback';
 
 class SignUp extends Component {
     constructor(props) {
@@ -48,7 +43,7 @@ class SignUp extends Component {
           .post('http://localhost:3005/api/v1/users/signup', signupForm)
           .then(res => {
             console.log(res.status)
-            if(res.status == 201){
+            if(res.status === 201){
             this.setState({ isSignedUp: true})
           }})
           .catch(err => {

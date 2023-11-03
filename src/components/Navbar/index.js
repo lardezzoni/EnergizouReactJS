@@ -5,7 +5,6 @@ import {
     NavLink,
     Bars,
     NavMenu,
-    NavBtn,
     NavBtnLink,
 } from "./navbarElements";
 import Button from '../Button';
@@ -18,14 +17,14 @@ const Navbar = () => {
                 <Bars />
  
                 <NavMenu>
-                    <NavLink to="/about" >
+                    <NavLink to="/" >
                         Começo
                     </NavLink>
                     
                     <NavLink to="/events" activeStyle>
                         Demo
                     </NavLink>
-                    <NavLink to="/team" activeStyle>
+                    <NavLink to="/contato" activeStyle>
                         Contato
                     </NavLink>
                     <NavLink to="/sign-up" activeStyle>
