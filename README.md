@@ -19,9 +19,3 @@ Use o commando ```npm install --legacy-peer-deps``` para instalar o ReactJS serv
 
 Após usar ```npm start``` para começar ambos os servers ao mesmo tempo, vá para a página Sign Up e se cadastre.
 
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
