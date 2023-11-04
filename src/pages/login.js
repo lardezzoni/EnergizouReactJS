@@ -52,7 +52,7 @@ class Login extends Component {
           this.setState({ isLoggedIn: true})
         }})
         .catch(err => {
-
+          alert("Senha ou usuário inválido");
           
 
         });

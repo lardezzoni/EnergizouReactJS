@@ -32,7 +32,12 @@ class SignUp extends Component {
         e.preventDefault();
     
         const { name, password, passwordConfirm, email } = this.state;
-    
+        if(password !== passwordConfirm){
+          alert("As senhas não são iguais")
+        }
+        else{
+
+        
         const signupForm = {
           name,
           password,
@@ -50,6 +55,7 @@ class SignUp extends Component {
           .catch(err => {
             console.error(err);
           });
+        }
       };
     render() {
         if (this.state.isSignedUp) {
