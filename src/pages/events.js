@@ -429,7 +429,7 @@ const bodySelect = () =>{
               name="empresa"
               type="empresa"
               label="Empresa"
-              required
+              
               autoComplete="off"
               
             />
@@ -505,7 +505,7 @@ const bodySelect = () =>{
               name="telefone"
               type="telefone"
               label="Telefone"
-              required
+              
               autoComplete="off"
               className={`input w-full ${
                 !errors.telefone && dirtyFields.telefone && "!bg-green-50"

@@ -32,6 +32,12 @@ class SignUp extends Component {
         e.preventDefault();
     
         const { name, password, passwordConfirm, email } = this.state;
+        const regExpEmail = /^[a-zA-Z0-9_.+]+(?<!^[0-9]*)@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/gm;
+        const isValid = regExpEmail.test(email);
+        if(!isValid){
+          alert("Insira um email válido")
+        }
+        else{
         if(password !== passwordConfirm){
           alert("As senhas não são iguais")
         }
@@ -56,7 +62,7 @@ class SignUp extends Component {
             console.error(err);
           });
         }
-      };
+      }};
     render() {
         if (this.state.isSignedUp) {
             // redirect to home if signed up
